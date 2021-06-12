@@ -121,13 +121,12 @@ export default defineComponent({
         .then(async () => {
           // console.log('values', formState, toRaw(formState))
           let result: any
-          let name: string = toRaw(formState).name
           // console.log(currentName.value, name)
           if (route.params.id && currentIcon.value !== formState.icon) {
             // 发送修改分类的请求
             result = await reqUpdate(modelUrl, {
-              id: route.params.id,
-              name,
+              _id: route.params.id,
+              name: formState.name,
               icon: formState.icon,
             })
           } else {
@@ -153,8 +152,8 @@ export default defineComponent({
       formRef.value.resetFields()
     }
 
-    // 获取物品列表详情
-    const getCategory = async (id: string) => {
+    /** 获取物品详情*/
+    const getItemDetail = async (id: string) => {
       // console.log("getCategory：", id);
       const result = (await reqGetDetail(modelUrl, { id })) as FormState
       // console.log(result)
@@ -168,7 +167,7 @@ export default defineComponent({
     onMounted(() => {
       // const id = route.params.id;
       if (route.params.id) {
-        getCategory(route.params.id.toString())
+        getItemDetail(route.params.id.toString())
       }
     })
 
@@ -215,7 +214,7 @@ export default defineComponent({
       rules,
       onSubmit,
       resetForm,
-      getCategory,
+      getItemDetail,
       currentName,
       loading,
       imageUrl,

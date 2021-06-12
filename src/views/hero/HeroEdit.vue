@@ -7,8 +7,27 @@
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
-    <a-form-item ref="name" label="名称" name="name">
+    <a-form-item label="名称" name="name">
       <a-input v-model:value="formState.name" placeholder="请输入英雄名称" />
+    </a-form-item>
+    <a-form-item label="称号" name="title">
+      <a-input v-model:value="formState.title" placeholder="请输入英雄称号" />
+    </a-form-item>
+    <a-form-item label="类型" name="categories">
+      <a-select
+        mode="multiple"
+        v-model:value="formState.categories"
+        style="width: 100%"
+        placeholder="请现在英雄分类"
+      >
+        <a-select-option
+          v-for="item of heroCategories"
+          :key="item._id"
+          :value="item._id"
+        >
+          {{ item.name }}
+        </a-select-option>
+      </a-select>
     </a-form-item>
     <a-form-item label="图标" name="avatar">
       <a-upload
@@ -50,11 +69,13 @@ import {
 } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
-import { reqAdd, reqGetDetail, reqUpdate } from '../../api'
+import { reqAdd, reqGetDetail, reqGetList, reqUpdate } from '../../api'
 
 interface FormState {
   name: string
   avatar: string | undefined
+  title: string
+  categories: string[]
 }
 
 interface FileItem {
@@ -88,11 +109,12 @@ export default defineComponent({
   },
   setup() {
     const formRef = ref()
-    const currentName = ref('') //编辑英雄传过来的英雄名
-    const currentIcon = ref('') //编辑英雄传过来的英雄图片
+    const heroCategories = ref<string[]>([])
     const formState: UnwrapRef<FormState> = reactive({
       name: '',
       avatar: undefined,
+      title: '',
+      categories: [],
     })
 
     // 上传图片相关参数
@@ -120,16 +142,15 @@ export default defineComponent({
         .validate()
         .then(async () => {
           // console.log('values', formState, toRaw(formState))
+          // console.log(toRaw(formState))
           let result: any
-          let name: string = toRaw(formState).name
-          // console.log(currentName.value, name)
-          if (route.params.id && currentIcon.value !== formState.avatar) {
+          if (route.params.id) {
+            const heroData: object = Object.assign(
+              { _id: route.params.id },
+              toRaw(formState)
+            )
             // 发送修改分类的请求
-            result = await reqUpdate(modelUrl, {
-              id: route.params.id,
-              name,
-              avatar: formState.avatar,
-            })
+            result = await reqUpdate(modelUrl, heroData)
           } else {
             // 发送添加分类的请求
             result = await reqAdd(modelUrl, toRaw(formState))
@@ -153,22 +174,25 @@ export default defineComponent({
       formRef.value.resetFields()
     }
 
-    // 获取物品列表详情
-    const getCategory = async (id: string) => {
+    /** 获取英雄详情*/
+    const getHeroDetail = async (id: string) => {
       // console.log("getCategory：", id);
       const result = (await reqGetDetail(modelUrl, { id })) as FormState
       // console.log(result)
-      currentName.value = result.name
-      formState.name = result.name
-      currentIcon.value = result.avatar
-      formState.avatar = result.avatar
+      Object.assign(formState, result)
       imageUrl.value = result.avatar
     }
 
+    /**获取英雄类型 */
+    const getHeroCategories = async () => {
+      const result = (await reqGetList('/categories')) as string[]
+      heroCategories.value = result
+    }
+
     onMounted(() => {
-      // const id = route.params.id;
+      getHeroCategories()
       if (route.params.id) {
-        getCategory(route.params.id.toString())
+        getHeroDetail(route.params.id.toString())
       }
     })
 
@@ -215,14 +239,13 @@ export default defineComponent({
       rules,
       onSubmit,
       resetForm,
-      getCategory,
-      currentName,
+      getHeroDetail,
       loading,
       imageUrl,
       handleChange,
       beforeUpload,
       fileList,
-      currentIcon,
+      heroCategories,
     }
   },
 })

@@ -11,10 +11,10 @@ const BASE_URL = '/admin/api/rest'
 /**添加某个分类/物品 */
 export const reqAdd = (modelUrl: string, data: object) => ajax(BASE_URL + modelUrl, data, 'POST')
 
-/**添加某个分类/物品的列表 */
+/**获取某个分类/物品的列表 */
 export const reqGetList = (modelUrl: string) => ajax(BASE_URL + modelUrl)
 
-/**添加某个分类/物品的详情 */
+/**获取某个分类/物品的详情 */
 export const reqGetDetail = (modelUrl: string, id: object) => ajax(BASE_URL + modelUrl + '/detail', id)
 
 /**修改某个分类/物品 */
