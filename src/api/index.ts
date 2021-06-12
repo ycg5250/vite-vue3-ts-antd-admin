@@ -4,17 +4,21 @@ import ajax from "./ajax";
 
 // const BASE_URL = 'admin/api'
 // 基础路径 http://localhost:3000不用写，注意，下面的admin前面的  /  必须写
-const BASE_URL = '/admin/api'
+const BASE_URL = '/admin/api/rest'
 
-// 添加分类
-export const reqAddCategoty = (data: object) => ajax(BASE_URL + '/categories', data, 'POST')
+// 定义通用CRUD请求接口
 
-// 获取分类列表
-export const reqGetCategotyList = () => ajax(BASE_URL + '/categories')
+/**添加某个分类/物品 */
+export const reqAdd = (modelUrl: string, data: object) => ajax(BASE_URL + modelUrl, data, 'POST')
 
-// 获取分类详情
-export const reqGetCategoty = (id: object) => ajax(BASE_URL + '/categories/detail', id)
+/**添加某个分类/物品的列表 */
+export const reqGetList = (modelUrl: string) => ajax(BASE_URL + modelUrl)
 
-// 修改分类
-export const reqUpdateGetCategoty = (data: object) => ajax(BASE_URL + '/categories/update', data, 'POST')
+/**添加某个分类/物品的详情 */
+export const reqGetDetail = (modelUrl: string, id: object) => ajax(BASE_URL + modelUrl + '/detail', id)
 
+/**修改某个分类/物品 */
+export const reqUpdate = (modelUrl: string, data: object) => ajax(BASE_URL + modelUrl + '/update', data, 'POST')
+
+/**删除某个分类/物品 */
+export const reqRemove = (modelUrl: string, data: object) => ajax(BASE_URL + modelUrl + '/delete', data, 'POST')

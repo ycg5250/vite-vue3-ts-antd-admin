@@ -1,5 +1,5 @@
 <template>
-  <h1>{{ id ? "编辑" : "新建" }}分类</h1>
+  <h1>{{ id ? "编辑" : "新建" }}分类{{ formState }}</h1>
   <a-form
     ref="formRef"
     :model="formState"
@@ -7,18 +7,20 @@
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
+    <a-form-item label="上级分类" name="parent">
+      <a-select v-model:value="formState.parent" placeholder="请选择分类">
+        <a-select-option
+          v-for="item in parentsList"
+          :key="item._id"
+          :value="item._id"
+          >{{ item.name }}</a-select-option
+        >
+      </a-select>
+    </a-form-item>
     <a-form-item ref="name" label="名称" name="name">
       <a-input v-model:value="formState.name" placeholder="请输入分类名称" />
     </a-form-item>
-    <!-- <a-form-item label="Activity zone" name="region">
-      <a-select
-        v-model:value="formState.region"
-        placeholder="please select your zone"
-      >
-        <a-select-option value="shanghai">Zone one</a-select-option>
-        <a-select-option value="beijing">Zone two</a-select-option>
-      </a-select>
-    </a-form-item> -->
+
     <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">保存</a-button>
       <a-button style="margin-left: 10px" @click="resetForm">重置</a-button>
@@ -33,33 +35,38 @@ import {
   defineComponent,
   onMounted,
   reactive,
+  Ref,
   ref,
   toRaw,
   UnwrapRef,
 } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
-import {
-  reqAddCategoty,
-  reqGetCategoty,
-  reqUpdateGetCategoty,
-} from "../../api";
+import { reqAdd, reqGetDetail, reqGetList, reqUpdate } from "../../api";
 
 interface FormState {
   name: string;
-  // region: string | undefined;
+  parent: string | undefined;
+}
+
+interface Parents {
+  _id: string;
+  name: string;
 }
 export default defineComponent({
   props: ["id"],
   setup() {
     const router = useRouter();
+    // 获取路由地址，用于发送该页面的请求的url参数
+    const modelUrl: string = "/" + router.currentRoute.value.path.split("/")[1];
     const route = useRoute();
 
     const formRef = ref();
     const newName = ref("");
+    const parentsList: Ref<Parents[]> = ref([]);
     const formState: UnwrapRef<FormState> = reactive({
       name: "",
-      // region: undefined,
+      parent: undefined,
     });
     const rules = {
       name: [
@@ -70,13 +77,6 @@ export default defineComponent({
         },
         // { min: 3, max: 5, message: "Length should be 3 to 5", trigger: "blur" },
       ],
-      // region: [
-      //   {
-      //     required: true,
-      //     message: "请输入选择的一级分类",
-      //     trigger: "change",
-      //   },
-      // ],
     };
     const onSubmit = () => {
       formRef.value
@@ -88,10 +88,13 @@ export default defineComponent({
           // console.log(newName.value, name);
           if (route.params.id && newName.value !== name) {
             // 发送修改分类的请求
-            result = await reqUpdateGetCategoty({ id: route.params.id, name });
+            result = await reqUpdate(modelUrl, {
+              id: route.params.id,
+              name,
+            });
           } else {
             // 发送添加分类的请求
-            result = await reqAddCategoty(toRaw(formState));
+            result = await reqAdd(modelUrl, toRaw(formState));
           }
 
           // console.log(result);
@@ -115,20 +118,28 @@ export default defineComponent({
     // 获取分类列表详情
     const getCategory = async (id: string) => {
       // console.log("getCategory：", id);
-      const result = (await reqGetCategoty({ id })) as FormState;
+      const result = (await reqGetDetail(modelUrl, { id })) as FormState;
       // console.log(result);
       newName.value = result.name;
       formState.name = result.name;
+      formState.parent = result.parent;
     };
 
     onMounted(() => {
+      getParentsList();
       // const id = route.params.id;
       if (route.params.id) {
         getCategory(route.params.id.toString());
-      } else {
-        // formRef.value = "";
       }
     });
+
+    // 获取父分类列表
+    const getParentsList = async () => {
+      const result = (await reqGetList(modelUrl)) as Parents[];
+      parentsList.value = result;
+
+      // console.log(parentsList.value);
+    };
 
     return {
       formRef,
@@ -140,6 +151,8 @@ export default defineComponent({
       resetForm,
       getCategory,
       newName,
+      getParentsList,
+      parentsList,
     };
   },
 });

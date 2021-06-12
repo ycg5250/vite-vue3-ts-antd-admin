@@ -1,6 +1,12 @@
 <template>
   <!-- <h2>{{ dataSource }}</h2> -->
+
   <a-table bordered :data-source="dataSource" :columns="columns">
+    <template #avatar="{ record }">
+      <span>
+        <img :src="record.avatar" alt="" />
+      </span>
+    </template>
     <template #operation="{ record }">
       <a-popconfirm
         v-if="dataSource.length"
@@ -16,87 +22,90 @@
   </a-table>
 </template>
 <script lang="ts">
-import { computed, defineComponent, onMounted, Ref, ref } from "vue";
-import { CheckOutlined, EditOutlined } from "@ant-design/icons-vue";
-import { reqGetList, reqRemove } from "../../api";
-import { useRouter } from "vue-router";
-import { message } from "ant-design-vue";
+import { computed, defineComponent, onMounted, Ref, ref } from 'vue'
+import {
+  CheckOutlined,
+  EditOutlined,
+  SmileOutlined,
+} from '@ant-design/icons-vue'
+import { reqGetList, reqRemove } from '../../api'
+import { useRouter } from 'vue-router'
+import { message } from 'ant-design-vue'
 
 interface DataItem {
-  key: string;
-  _id?: string;
-  name: string;
-  parent?: any;
+  key: string
+  _id?: string
+  name: string
 }
 
 export default defineComponent({
+  name: 'HeroList',
   components: {
     CheckOutlined,
     EditOutlined,
+    SmileOutlined,
   },
   setup() {
-    const router = useRouter();
+    const router = useRouter()
     // 获取路由地址，用于发送该页面的请求的url参数
-    const modelUrl: string = "/" + router.currentRoute.value.path.split("/")[1];
+    const modelUrl: string = '/' + router.currentRoute.value.path.split('/')[1]
     const columns = [
       {
-        title: "ID",
-        dataIndex: "key",
+        title: 'ID',
+        dataIndex: 'key',
         // width: "30%",
-        key: "key",
+        key: 'key',
       },
       {
-        title: "上级分类",
-        dataIndex: "parent",
-        key: "parent",
+        title: '分类名称',
+        dataIndex: 'name',
+        key: 'name',
       },
       {
-        title: "分类名称",
-        dataIndex: "name",
-        key: "name",
+        title: '图标',
+        dataIndex: 'avatar',
+        width: '30%',
+        key: 'avatar',
+        slots: { customRender: 'avatar' },
       },
       {
-        title: "操作",
-        dataIndex: "operation",
-        slots: { customRender: "operation" },
-        key: "operation",
+        title: '操作',
+        dataIndex: 'operation',
+        slots: { customRender: 'operation' },
+        key: 'operation',
       },
-    ];
-    const dataSource: Ref<DataItem[]> = ref([]);
+    ]
+    const dataSource: Ref<DataItem[]> = ref([])
 
-    const getCategotyList = async () => {
-      const result = (await reqGetList(modelUrl)) as DataItem[];
+    const getGameItemList = async () => {
+      const result = (await reqGetList(modelUrl)) as DataItem[]
       // console.log(result);
-      dataSource.value = result; //先赋值，不然无法将_id赋值给key
+      dataSource.value = result //先赋值，不然无法将_id赋值给key
       result.forEach((item, index) => {
-        dataSource.value[index].key = item._id;
-        if (item.parent) {
-          dataSource.value[index].parent = item.parent.name;
-        }
-      });
-    };
+        dataSource.value[index].key = item._id
+      })
+    }
 
     // 发送请求获取分类列表数据
     onMounted(() => {
-      getCategotyList();
-    });
+      getGameItemList()
+    })
 
-    const count = computed(() => dataSource.value.length + 1);
+    const count = computed(() => dataSource.value.length + 1)
 
-    // 删除分类
     const onDelete = async (key: string) => {
       // dataSource.value = dataSource.value.filter((item) => item.key !== key);
-      const result: any = await reqRemove(modelUrl, { id: key });
+      const result: any = await reqRemove(modelUrl, { id: key })
       if (result.status === 0) {
-        message.success(`${result.message}`);
-        getCategotyList();
+        message.success(`${result.message}`)
+        getGameItemList()
       }
-    };
+    }
 
     const goToEdit = (key: string) => {
       // console.log(111);
-      router.push(`/categories/edit/${key}`);
-    };
+      router.push(`/heroes/edit/${key}`)
+    }
 
     return {
       columns,
@@ -104,10 +113,10 @@ export default defineComponent({
       dataSource,
       count,
       goToEdit,
-      getCategotyList,
-    };
+      getGameItemList,
+    }
   },
-});
+})
 </script>
 <style>
 .editable-cell {

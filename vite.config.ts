@@ -18,7 +18,9 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/admin/api': 'http://localhost:8000' //字符串简写手法
+      '/admin/api/rest': 'http://localhost:8000', //字符串简写手法
+      '/admin/api/upload': 'http://localhost:8000', //字符串简写手法
+      // '': 'http://localhost:8000' //字符串简写手法
     }
   }
 })
