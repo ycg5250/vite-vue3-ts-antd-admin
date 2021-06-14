@@ -53,6 +53,22 @@
             ><router-link to="/heroes/list">英雄列表</router-link></a-menu-item
           >
         </a-sub-menu>
+        <a-sub-menu key="sub4">
+          <template #title>
+            <span>
+              <FileOutlined />
+              <span>文章</span>
+            </span>
+          </template>
+          <a-menu-item key="8"
+            ><router-link to="/articles/create">新建文章</router-link>
+          </a-menu-item>
+          <a-menu-item key="9"
+            ><router-link to="/articles/list"
+              >文章列表</router-link
+            ></a-menu-item
+          >
+        </a-sub-menu>
       </a-menu>
     </a-layout-sider>
     <a-layout>
@@ -76,7 +92,6 @@ import {
   PieChartOutlined,
   DesktopOutlined,
   UserOutlined,
-  TeamOutlined,
   FileOutlined,
 } from '@ant-design/icons-vue'
 import { defineComponent, ref, computed } from 'vue'
@@ -89,7 +104,6 @@ export default defineComponent({
     PieChartOutlined,
     DesktopOutlined,
     UserOutlined,
-    TeamOutlined,
     FileOutlined,
   },
   setup(props) {

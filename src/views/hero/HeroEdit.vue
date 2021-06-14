@@ -168,6 +168,7 @@
               ></a-input>
             </a-form-item>
             <!-- :customRequest="customRequest" -->
+            <!-- list-type="picture-card" -->
             <a-form-item label="图标">
               <a-upload
                 v-model:avatar="item.icon"
@@ -198,6 +199,22 @@
                 placeholder="请输入技能描述"
                 :rows="4"
               />
+            </a-form-item>
+            <a-form-item>
+              <a-popconfirm
+                :title="`确认删除-${
+                  formState.skills[index].name
+                    ? formState.skills[index].name
+                    : ''
+                }-吗`"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="delateSkill(index)"
+              >
+                <a-button style="margin-left: 5.5rem" type="danger"
+                  >删除</a-button
+                >
+              </a-popconfirm>
             </a-form-item>
           </a-col>
         </a-row>
@@ -368,8 +385,13 @@ export default defineComponent({
       heroItems.value = result
     }
 
+    /**删除英雄技能 */
+    const delateSkill = (index: number) => {
+      formState.skills.splice(index, 1)
+    }
+
     onMounted(() => {
-      activeKey.value = '2'
+      activeKey.value = '1'
       getHeroCategories()
       getHeroItems()
       if (route.params.id) {
@@ -444,6 +466,7 @@ export default defineComponent({
       heroItems,
       activeKey,
       customRequest,
+      delateSkill,
     }
   },
 })
@@ -454,6 +477,7 @@ export default defineComponent({
   width: 128px;
   height: 128px;
 }
+
 .ant-upload-select-picture-card i {
   font-size: 32px;
   color: #999;

@@ -8,9 +8,11 @@ import CategoryList from '../views/category/CategoryList.vue'
 import GameItems from '../views/gameitems/GameItems.vue'
 import GameItemsList from '../views/gameitems/GameItemsList.vue'
 
-
 import HeroEdit from '../views/hero/HeroEdit.vue'
 import HeroList from '../views/hero/HeroList.vue'
+
+import ArticleEdit from '../views/article/ArticleEdit.vue'
+import ArticleList from '../views/article/ArticleList.vue'
 
 const routes = [
   { path: '', redirect: '/home' },
@@ -36,6 +38,13 @@ const routes = [
       { path: 'create', component: HeroEdit, alias: 'create' },
       { path: 'edit/:id', component: HeroEdit, alias: 'edit', props: true },
       { path: 'list', component: HeroList, alias: 'list' },
+    ]
+  },
+  {
+    path: '/articles', component: Home, alias: '/articles', children: [
+      { path: 'create', component: ArticleEdit, alias: 'create' },
+      { path: 'edit/:id', component: ArticleEdit, alias: 'edit', props: true },
+      { path: 'list', component: ArticleList, alias: 'list' },
     ]
   },
 ]
