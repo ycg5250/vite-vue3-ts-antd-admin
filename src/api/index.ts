@@ -22,3 +22,7 @@ export const reqUpdate = (modelUrl: string, data: object) => ajax(BASE_URL + mod
 
 /**删除某个分类/物品 */
 export const reqRemove = (modelUrl: string, data: object) => ajax(BASE_URL + modelUrl + '/delete', data, 'POST')
+
+
+/**自定义图片上传接口 */
+export const uploadImage = (url: string, data: object) => ajax(url, data, 'POST')

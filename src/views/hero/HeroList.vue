@@ -57,14 +57,19 @@ export default defineComponent({
         key: 'key',
       },
       {
-        title: '分类名称',
+        title: '英雄名称',
         dataIndex: 'name',
         key: 'name',
       },
       {
+        title: '称号',
+        dataIndex: 'title',
+        key: 'title',
+      },
+      {
         title: '图标',
         dataIndex: 'avatar',
-        width: '30%',
+        width: '10%',
         key: 'avatar',
         slots: { customRender: 'avatar' },
       },

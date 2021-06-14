@@ -7,47 +7,202 @@
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
-    <a-form-item label="名称" name="name">
-      <a-input v-model:value="formState.name" placeholder="请输入英雄名称" />
-    </a-form-item>
-    <a-form-item label="称号" name="title">
-      <a-input v-model:value="formState.title" placeholder="请输入英雄称号" />
-    </a-form-item>
-    <a-form-item label="类型" name="categories">
-      <a-select
-        mode="multiple"
-        v-model:value="formState.categories"
-        style="width: 100%"
-        placeholder="请现在英雄分类"
-      >
-        <a-select-option
-          v-for="item of heroCategories"
-          :key="item._id"
-          :value="item._id"
+    <a-tabs type="card" v-model:activeKey="activeKey">
+      <a-tab-pane key="1" tab="基础信息">
+        <a-form-item label="名称" name="name">
+          <a-input
+            v-model:value="formState.name"
+            placeholder="请输入英雄名称"
+          />
+        </a-form-item>
+        <a-form-item label="称号" name="title">
+          <a-input
+            v-model:value="formState.title"
+            placeholder="请输入英雄称号"
+          />
+        </a-form-item>
+        <a-form-item label="类型" name="categories">
+          <a-select
+            mode="multiple"
+            v-model:value="formState.categories"
+            style="width: 100%"
+            placeholder="请现在英雄分类"
+          >
+            <a-select-option
+              v-for="item of heroCategories"
+              :key="item._id"
+              :value="item._id"
+            >
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="难度" name="difficult">
+          <a-slider
+            style="width: 20rem"
+            v-model:value="formState.scores.difficult"
+            :max="9"
+          />
+          <span class="hero-scores">{{
+            formState.scores.difficult ? formState.scores.difficult : '0'
+          }}</span>
+        </a-form-item>
+        <a-form-item label="技能" name="skills">
+          <a-slider
+            style="width: 20rem"
+            v-model:value="formState.scores.skills"
+            :max="9"
+          />
+          <span class="hero-scores">{{
+            formState.scores.skills ? formState.scores.skills : 0
+          }}</span>
+        </a-form-item>
+        <a-form-item label="攻击" name="attack">
+          <a-slider
+            style="width: 20rem"
+            v-model:value="formState.scores.attack"
+            :max="9"
+          />
+          <span class="hero-scores">{{
+            formState.scores.attack ? formState.scores.attack : 0
+          }}</span>
+        </a-form-item>
+        <a-form-item label="生存" name="survive">
+          <a-slider
+            style="width: 20rem"
+            v-model:value="formState.scores.survive"
+            :max="9"
+          />
+          <span class="hero-scores">{{
+            formState.scores.survive ? formState.scores.survive : 0
+          }}</span>
+        </a-form-item>
+        <a-form-item label="顺风出装" name="items1">
+          <a-select
+            mode="multiple"
+            v-model:value="formState.items1"
+            style="width: 100%"
+            placeholder="请现在英雄装备"
+          >
+            <a-select-option
+              v-for="item of heroItems"
+              :key="item._id"
+              :value="item._id"
+            >
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="逆风出装" name="items2">
+          <a-select
+            mode="multiple"
+            v-model:value="formState.items2"
+            style="width: 100%"
+            placeholder="请现在英雄装备"
+          >
+            <a-select-option
+              v-for="item of heroItems"
+              :key="item._id"
+              :value="item._id"
+            >
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="使用技巧" name="usageTips">
+          <a-textarea
+            v-model:value="formState.usageTips"
+            placeholder="请输入英雄使用技巧"
+            :rows="4"
+          />
+        </a-form-item>
+        <a-form-item label="对抗技巧" name="battleTips">
+          <a-textarea
+            v-model:value="formState.battleTips"
+            placeholder="请输入英雄对抗技巧"
+            :rows="4"
+          />
+        </a-form-item>
+        <a-form-item label="团战思路" name="teamTips">
+          <a-textarea
+            v-model:value="formState.teamTips"
+            placeholder="请输入英雄团战思路"
+            :rows="4"
+          />
+        </a-form-item>
+        <a-form-item label="图标" name="avatar">
+          <a-upload
+            v-model:avatar="formState.avatar"
+            name="avatar"
+            list-type="picture-card"
+            class="avatar-uploader"
+            :show-upload-list="false"
+            action="/admin/api/upload"
+            :before-upload="beforeUpload"
+            @change="handleChange"
+          >
+            <img v-if="formState.avatar" :src="formState.avatar" alt="avatar" />
+            <div v-else>
+              <loading-outlined v-if="loading"></loading-outlined>
+              <plus-outlined v-else></plus-outlined>
+              <div class="ant-upload-text">Upload</div>
+            </div>
+          </a-upload>
+        </a-form-item>
+      </a-tab-pane>
+      <a-tab-pane key="2" tab="技能">
+        <a-button type="primary" @click="formState.skills.push({})">
+          <template #icon><PlusOutlined /></template>添加技能</a-button
         >
-          {{ item.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="图标" name="avatar">
-      <a-upload
-        v-model:avatar="formState.avatar"
-        name="avatar"
-        list-type="picture-card"
-        class="avatar-uploader"
-        :show-upload-list="false"
-        action="/admin/api/upload"
-        :before-upload="beforeUpload"
-        @change="handleChange"
-      >
-        <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-        <div v-else>
-          <loading-outlined v-if="loading"></loading-outlined>
-          <plus-outlined v-else></plus-outlined>
-          <div class="ant-upload-text">Upload</div>
-        </div>
-      </a-upload>
-    </a-form-item>
+        <a-row type="flex">
+          <a-col
+            :span="10"
+            :offset="2"
+            v-for="(item, index) of formState.skills"
+            :key="index"
+          >
+            <a-form-item label="名称">
+              <a-input
+                v-model:value="item.name"
+                placeholder="请输入技能名称"
+              ></a-input>
+            </a-form-item>
+            <!-- :customRequest="customRequest" -->
+            <a-form-item label="图标">
+              <a-upload
+                v-model:avatar="item.icon"
+                name="avatar"
+                :data="{ index }"
+                list-type="picture-card"
+                class="avatar-uploader"
+                :show-upload-list="false"
+                action="/admin/api/upload"
+                :before-upload="beforeUpload"
+                :customRequest="customRequest"
+              >
+                <img
+                  v-if="formState.skills[index].icon"
+                  :src="formState.skills[index].icon"
+                  alt="avatar"
+                />
+                <div v-else>
+                  <loading-outlined v-if="loading"></loading-outlined>
+                  <plus-outlined v-else></plus-outlined>
+                  <div class="ant-upload-text">Upload</div>
+                </div>
+              </a-upload>
+            </a-form-item>
+            <a-form-item label="描述">
+              <a-textarea
+                v-model:value="item.description"
+                placeholder="请输入技能描述"
+                :rows="4"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-tab-pane>
+    </a-tabs>
 
     <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
       <a-button type="primary" @click="onSubmit">保存</a-button>
@@ -69,13 +224,26 @@ import {
 } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
-import { reqAdd, reqGetDetail, reqGetList, reqUpdate } from '../../api'
+import {
+  reqAdd,
+  reqGetDetail,
+  reqGetList,
+  reqUpdate,
+  uploadImage,
+} from '../../api'
 
 interface FormState {
   name: string
   avatar: string | undefined
   title: string
   categories: string[]
+  scores: object
+  items1: string[]
+  items2: string[]
+  usageTips: string
+  battleTips: string
+  teamTips: string
+  skills: any[]
 }
 
 interface FileItem {
@@ -91,10 +259,9 @@ interface FileItem {
 
 interface FileInfo {
   file: FileItem
-  fileList: FileItem[]
 }
 
-function getBase64(img: Blob, callback: (base64Url: string) => void) {
+function getBase64(img: any, callback: (base64Url: string) => void) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result as string))
   reader.readAsDataURL(img)
@@ -109,18 +276,25 @@ export default defineComponent({
   },
   setup() {
     const formRef = ref()
+    const activeKey = ref('1') //当前激活 tab 面板的 key
     const heroCategories = ref<string[]>([])
+    const heroItems = ref<string[]>([])
     const formState: UnwrapRef<FormState> = reactive({
       name: '',
       avatar: undefined,
       title: '',
       categories: [],
+      scores: {},
+      items1: [],
+      items2: [],
+      usageTips: '',
+      battleTips: '',
+      teamTips: '',
+      skills: [],
     })
 
     // 上传图片相关参数
-    const fileList = ref([])
     const loading = ref<boolean>(false)
-    const imageUrl = ref<string>('')
 
     const router = useRouter()
     // 获取路由地址，用于发送该页面的请求的url参数
@@ -180,7 +354,6 @@ export default defineComponent({
       const result = (await reqGetDetail(modelUrl, { id })) as FormState
       // console.log(result)
       Object.assign(formState, result)
-      imageUrl.value = result.avatar
     }
 
     /**获取英雄类型 */
@@ -189,8 +362,16 @@ export default defineComponent({
       heroCategories.value = result
     }
 
+    /**获取英雄装备 */
+    const getHeroItems = async () => {
+      const result = (await reqGetList('/gameitems')) as string[]
+      heroItems.value = result
+    }
+
     onMounted(() => {
+      activeKey.value = '2'
       getHeroCategories()
+      getHeroItems()
       if (route.params.id) {
         getHeroDetail(route.params.id.toString())
       }
@@ -198,16 +379,14 @@ export default defineComponent({
 
     //------图片相关
     const handleChange = (info: FileInfo) => {
-      // console.log('handleChange')
+      // console.log('handleChange', info)
       if (info.file.status === 'uploading') {
         loading.value = true
         return
       }
       if (info.file.status === 'done') {
-        // console.log(info.file)
         // Get this url from response in real world.
         getBase64(info.file.originFileObj, (base64Url: string) => {
-          imageUrl.value = base64Url
           loading.value = false
           formState.avatar = base64Url
         })
@@ -216,6 +395,23 @@ export default defineComponent({
         loading.value = false
         message.error('upload error')
       }
+    }
+
+    /**自定义上传图片 */
+    const customRequest = async (options: any) => {
+      // console.log('customRequest', options)
+      const { filename, file, action, data, onSuccess } = options
+      // 定义上传的文件
+      const formData = new FormData()
+      formData.append(filename, file)
+      // 发送请求
+      const result: any = await uploadImage(action, formData)
+      // console.log(result)
+      getBase64(file, (base64Url: string) => {
+        formState.skills[data.index].icon = base64Url
+      })
+      // 调用 onSuccess 不然会一直显示loadning
+      onSuccess()
     }
 
     const beforeUpload = (file: FileItem) => {
@@ -241,11 +437,13 @@ export default defineComponent({
       resetForm,
       getHeroDetail,
       loading,
-      imageUrl,
       handleChange,
       beforeUpload,
-      fileList,
       heroCategories,
+      getHeroItems,
+      heroItems,
+      activeKey,
+      customRequest,
     }
   },
 })
@@ -264,5 +462,11 @@ export default defineComponent({
 .ant-upload-select-picture-card .ant-upload-text {
   margin-top: 8px;
   color: #666;
+}
+.hero-scores {
+  position: absolute;
+  top: 0.5rem;
+  right: 26rem;
+  margin-left: 0.7rem;
 }
 </style>
