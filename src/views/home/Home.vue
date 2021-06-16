@@ -1,73 +1,120 @@
 <template>
   <a-layout style="min-height: 100vh">
     <a-layout-sider v-model:collapsed="collapsed" collapsible>
-      <!-- <div class="logo" /> -->
-      <a-menu theme="dark" v-model:selectedKeys="selectedKeys" mode="inline">
-        <!-- <a-menu-item key="1">
-          <pie-chart-outlined />
-          <span><router-link to="/home">首页</router-link></span>
-        </a-menu-item> -->
+      <a-menu
+        theme="dark"
+        v-model:selectedKeys="selectedKeys"
+        mode="inline"
+        @select="selectMenu"
+      >
         <a-sub-menu key="sub1">
+          <router-link to="/categories"></router-link>
           <template #title>
             <span>
-              <PieChartOutlined />
-              <span>分类菜单</span>
+              <MailOutlined />
+              <span>内容管理</span>
             </span>
           </template>
-          <a-menu-item key="2"
-            ><router-link to="/categories/create">新建分类</router-link>
-          </a-menu-item>
-          <a-menu-item key="3"
-            ><router-link to="/categories/list"
-              >分类列表</router-link
-            ></a-menu-item
-          >
+          <a-menu-item-group key="g1">
+            <template #title>
+              <QqOutlined />
+              <span>分类管理</span>
+            </template>
+            <a-menu-item key="1">
+              <router-link to="/categories/create">新建分类</router-link>
+            </a-menu-item>
+            <a-menu-item key="2">
+              <router-link to="/categories/list">分类列表</router-link>
+            </a-menu-item>
+          </a-menu-item-group>
+          <a-menu-item-group key="g2" title="物品">
+            <a-menu-item key="3">
+              <router-link to="/gameitems/create">新建物品</router-link>
+            </a-menu-item>
+            <a-menu-item key="4">
+              <router-link to="/gameitems/list">物品列表</router-link>
+            </a-menu-item>
+          </a-menu-item-group>
+          <a-menu-item-group key="g3" title="英雄">
+            <a-menu-item key="5">
+              <router-link to="/heroes/create">新建英雄</router-link>
+            </a-menu-item>
+            <a-menu-item key="6">
+              <router-link to="/heroes/list">英雄列表</router-link>
+            </a-menu-item>
+          </a-menu-item-group>
+          <a-menu-item-group key="g4" title="文章">
+            <a-menu-item key="7">
+              <router-link to="/articles/create">新建文章</router-link>
+            </a-menu-item>
+            <a-menu-item key="8">
+              <router-link to="/articles/list">文章列表</router-link>
+            </a-menu-item>
+            <a-menu-item-group key="g5" title="广告">
+              <a-menu-item key="9">
+                <router-link to="/ads/create">新建广告位</router-link>
+              </a-menu-item>
+              <a-menu-item key="10">
+                <router-link to="/ads/list">广告位列表</router-link>
+              </a-menu-item>
+            </a-menu-item-group>
+          </a-menu-item-group>
         </a-sub-menu>
         <a-sub-menu key="sub2">
           <template #title>
             <span>
-              <DesktopOutlined />
-              <span>物品</span>
+              <UserOutlined />
+              <span>系统设置</span>
             </span>
           </template>
-          <a-menu-item key="4"
-            ><router-link to="/gameitems/create">新建物品</router-link>
-          </a-menu-item>
-          <a-menu-item key="5"
-            ><router-link to="/gameitems/list"
-              >物品列表</router-link
-            ></a-menu-item
-          >
+          <a-menu-item-group key="g6">
+            <template #title>
+              <QqOutlined />
+              <span>管理员</span>
+            </template>
+            <a-menu-item key="11">
+              <router-link to="/admin_users/create">新建管理员</router-link>
+            </a-menu-item>
+            <a-menu-item key="12">
+              <router-link to="/admin_users/list">管理员列表</router-link>
+            </a-menu-item>
+          </a-menu-item-group>
+          <a-menu-item-group key="g7" title="物品">
+            <a-menu-item key="13">
+              <router-link to="/gameitems/create">新建物品</router-link>
+            </a-menu-item>
+            <a-menu-item key="14">
+              <router-link to="/gameitems/list">物品列表</router-link>
+            </a-menu-item>
+          </a-menu-item-group>
         </a-sub-menu>
         <a-sub-menu key="sub3">
           <template #title>
             <span>
-              <user-outlined />
-              <span>英雄</span>
+              <PieChartOutlined />
+              <span>运营管理</span>
             </span>
           </template>
-          <a-menu-item key="6"
-            ><router-link to="/heroes/create">新建英雄</router-link>
-          </a-menu-item>
-          <a-menu-item key="7"
-            ><router-link to="/heroes/list">英雄列表</router-link></a-menu-item
-          >
-        </a-sub-menu>
-        <a-sub-menu key="sub4">
-          <template #title>
-            <span>
-              <FileOutlined />
-              <span>文章</span>
-            </span>
-          </template>
-          <a-menu-item key="8"
-            ><router-link to="/articles/create">新建文章</router-link>
-          </a-menu-item>
-          <a-menu-item key="9"
-            ><router-link to="/articles/list"
-              >文章列表</router-link
-            ></a-menu-item
-          >
+          <a-menu-item-group key="g8">
+            <template #title>
+              <QqOutlined />
+              <span>管理员</span>
+            </template>
+            <a-menu-item key="15">
+              <router-link to="/categories/create">新建管理员</router-link>
+            </a-menu-item>
+            <a-menu-item key="16">
+              <router-link to="/categories/list">管理员列表</router-link>
+            </a-menu-item>
+          </a-menu-item-group>
+          <a-menu-item-group key="g9" title="物品">
+            <a-menu-item key="17">
+              <router-link to="/gameitems/create">新建物品</router-link>
+            </a-menu-item>
+            <a-menu-item key="18">
+              <router-link to="/gameitems/list">物品列表</router-link>
+            </a-menu-item>
+          </a-menu-item-group>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>
@@ -93,8 +140,10 @@ import {
   DesktopOutlined,
   UserOutlined,
   FileOutlined,
+  MailOutlined,
+  QqOutlined,
 } from '@ant-design/icons-vue'
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 // import Login from "../login/Login.vue";
 
@@ -105,6 +154,8 @@ export default defineComponent({
     DesktopOutlined,
     UserOutlined,
     FileOutlined,
+    MailOutlined,
+    QqOutlined,
   },
   setup(props) {
     // const router = useRouter();
@@ -115,9 +166,18 @@ export default defineComponent({
     // });
     const collapsed = ref<boolean>(false)
     const selectedKeys = ref<string[]>(['1'])
+
+    onMounted(() => {
+      selectedKeys.value = ['2']
+    })
+
+    const selectMenu = ({ item, key, selectedKeys }) => {
+      // console.log(item, key, selectedKeys)
+    }
     return {
       collapsed,
       selectedKeys,
+      selectMenu,
     }
   },
 })
