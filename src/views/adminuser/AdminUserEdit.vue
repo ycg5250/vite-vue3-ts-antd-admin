@@ -7,8 +7,8 @@
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
-    <a-form-item label="用户名" name="name">
-      <a-input v-model:value="formState.name" placeholder="请输入用户名" />
+    <a-form-item label="用户名" name="username">
+      <a-input v-model:value="formState.username" placeholder="请输入用户名" />
     </a-form-item>
     <a-form-item label="密码" name="password">
       <a-input
@@ -32,17 +32,16 @@ import {
   defineComponent,
   onMounted,
   reactive,
-  Ref,
   ref,
   toRaw,
   UnwrapRef,
 } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
-import { reqAdd, reqGetDetail, reqGetList, reqUpdate } from '../../api'
+import { reqAdd, reqGetDetail, reqUpdate } from '../../api'
 
 interface FormState {
-  name: string
+  username: string
   password: string
 }
 
@@ -56,11 +55,11 @@ export default defineComponent({
 
     const formRef = ref()
     const formState: UnwrapRef<FormState> = reactive({
-      name: '',
+      username: '',
       password: '',
     })
     const rules = {
-      name: [
+      username: [
         {
           required: true,
           message: '请输入用户名',

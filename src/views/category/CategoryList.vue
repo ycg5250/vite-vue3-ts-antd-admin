@@ -16,17 +16,17 @@
   </a-table>
 </template>
 <script lang="ts">
-import { computed, defineComponent, onMounted, Ref, ref } from "vue";
-import { CheckOutlined, EditOutlined } from "@ant-design/icons-vue";
-import { reqGetList, reqRemove } from "../../api";
-import { useRouter } from "vue-router";
-import { message } from "ant-design-vue";
+import { computed, defineComponent, onMounted, Ref, ref } from 'vue'
+import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue'
+import { reqGetList, reqRemove } from '../../api'
+import { useRouter } from 'vue-router'
+import { message } from 'ant-design-vue'
 
 interface DataItem {
-  key: string;
-  _id?: string;
-  name: string;
-  parent?: any;
+  key: string
+  _id?: string
+  name: string
+  parent?: any
 }
 
 export default defineComponent({
@@ -35,68 +35,74 @@ export default defineComponent({
     EditOutlined,
   },
   setup() {
-    const router = useRouter();
+    const router = useRouter()
     // 获取路由地址，用于发送该页面的请求的url参数
-    const modelUrl: string = "/" + router.currentRoute.value.path.split("/")[1];
+    const modelUrl: string = '/' + router.currentRoute.value.path.split('/')[1]
     const columns = [
       {
-        title: "ID",
-        dataIndex: "key",
+        title: 'ID',
+        dataIndex: 'key',
         // width: "30%",
-        key: "key",
+        key: 'key',
       },
       {
-        title: "上级分类",
-        dataIndex: "parent",
-        key: "parent",
+        title: '上级分类',
+        dataIndex: 'parent',
+        key: 'parent',
       },
       {
-        title: "分类名称",
-        dataIndex: "name",
-        key: "name",
+        title: '分类名称',
+        dataIndex: 'name',
+        key: 'name',
       },
       {
-        title: "操作",
-        dataIndex: "operation",
-        slots: { customRender: "operation" },
-        key: "operation",
+        title: '操作',
+        dataIndex: 'operation',
+        slots: { customRender: 'operation' },
+        key: 'operation',
       },
-    ];
-    const dataSource: Ref<DataItem[]> = ref([]);
+    ]
+    const dataSource: Ref<DataItem[]> = ref([])
 
+    /**获取分类列表数据 */
     const getCategotyList = async () => {
-      const result = (await reqGetList(modelUrl)) as DataItem[];
+      const result: any = (await reqGetList(modelUrl)) as DataItem[]
       // console.log(result);
-      dataSource.value = result; //先赋值，不然无法将_id赋值给key
-      result.forEach((item, index) => {
-        dataSource.value[index].key = item._id;
-        if (item.parent) {
-          dataSource.value[index].parent = item.parent.name;
-        }
-      });
-    };
+      if (result.status === 0) {
+        //已经登陆可以获取数据
+        dataSource.value = result //先赋值，不然无法将_id赋值给key
+        result.forEach((item, index) => {
+          dataSource.value[index].key = item._id
+          if (item.parent) {
+            dataSource.value[index].parent = item.parent.name
+          }
+        })
+      } else {
+        message.error(`${result.message}`)
+      }
+    }
 
     // 发送请求获取分类列表数据
     onMounted(() => {
-      getCategotyList();
-    });
+      getCategotyList()
+    })
 
-    const count = computed(() => dataSource.value.length + 1);
+    const count = computed(() => dataSource.value.length + 1)
 
     // 删除分类
     const onDelete = async (key: string) => {
       // dataSource.value = dataSource.value.filter((item) => item.key !== key);
-      const result: any = await reqRemove(modelUrl, { id: key });
+      const result: any = await reqRemove(modelUrl, { id: key })
       if (result.status === 0) {
-        message.success(`${result.message}`);
-        getCategotyList();
+        message.success(`${result.message}`)
+        getCategotyList()
       }
-    };
+    }
 
     const goToEdit = (key: string) => {
       // console.log(111);
-      router.push(`/categories/edit/${key}`);
-    };
+      router.push(`/categories/edit/${key}`)
+    }
 
     return {
       columns,
@@ -105,9 +111,9 @@ export default defineComponent({
       count,
       goToEdit,
       getCategotyList,
-    };
+    }
   },
-});
+})
 </script>
 <style>
 .editable-cell {

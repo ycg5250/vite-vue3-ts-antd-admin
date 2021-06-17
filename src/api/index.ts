@@ -5,6 +5,7 @@ import ajax from "./ajax";
 // const BASE_URL = 'admin/api'
 // 基础路径 http://localhost:3000不用写，注意，下面的admin前面的  /  必须写
 const BASE_URL = '/admin/api/rest'
+const BASE_LOGIN_URL = '/admin/api'
 
 // 定义通用CRUD请求接口
 
@@ -26,3 +27,6 @@ export const reqRemove = (modelUrl: string, data: object) => ajax(BASE_URL + mod
 
 /**自定义图片上传接口 */
 export const uploadImage = (url: string, data: object) => ajax(url, data, 'POST')
+
+/**登录接口 */
+export const reqLogin = (data: object) => ajax(BASE_LOGIN_URL + '/login', data, 'POST')
