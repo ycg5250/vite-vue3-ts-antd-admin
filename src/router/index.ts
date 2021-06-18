@@ -23,7 +23,7 @@ import AdminUserList from '../views/adminuser/AdminUserList.vue'
 
 const routes = [
   { path: '', redirect: '/categories' },
-  { path: '/login', component: Login, alias: '/login' },
+  { path: '/login', component: Login, alias: '/login', meta: { isPublic: true } },
   {
     path: '/categories', component: Home, children: [
       { path: '', redirect: '/categories/create' },
@@ -73,6 +73,13 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (!to.meta.isPublic && !localStorage.token) {
+    return next('/login')
+  }
+  next()
 })
 
 export default router

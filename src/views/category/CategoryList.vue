@@ -68,18 +68,14 @@ export default defineComponent({
     const getCategotyList = async () => {
       const result: any = (await reqGetList(modelUrl)) as DataItem[]
       // console.log(result);
-      if (result.status === 0) {
-        //已经登陆可以获取数据
-        dataSource.value = result //先赋值，不然无法将_id赋值给key
-        result.forEach((item, index) => {
-          dataSource.value[index].key = item._id
-          if (item.parent) {
-            dataSource.value[index].parent = item.parent.name
-          }
-        })
-      } else {
-        message.error(`${result.message}`)
-      }
+      //已经登陆可以获取数据
+      dataSource.value = result //先赋值，不然无法将_id赋值给key
+      result.forEach((item, index) => {
+        dataSource.value[index].key = item._id
+        if (item.parent) {
+          dataSource.value[index].parent = item.parent.name
+        }
+      })
     }
 
     // 发送请求获取分类列表数据

@@ -16,6 +16,7 @@
         name="avatar"
         list-type="picture-card"
         class="avatar-uploader"
+        :headers="headers"
         :show-upload-list="false"
         action="/admin/api/upload"
         :before-upload="beforeUpload"
@@ -42,6 +43,7 @@ import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue'
 import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface'
 import {
   defineComponent,
+  getCurrentInstance,
   onMounted,
   reactive,
   ref,
@@ -79,6 +81,13 @@ function getBase64(img: Blob, callback: (base64Url: string) => void) {
   reader.readAsDataURL(img)
 }
 
+// 定义了全局方法之后需要扩充类型
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $getAuthheader: any
+  }
+}
+
 export default defineComponent({
   name: 'GameItems',
   props: ['id'],
@@ -87,6 +96,14 @@ export default defineComponent({
     PlusOutlined,
   },
   setup() {
+    // const internalInstance = getCurrentInstance()
+    // console.log(internalInstance)
+    // 这种方法也可以获取到全局方法
+    // console.log(internalInstance.appContext.config.globalProperties.$global)
+    //s 使用proxy得到全局方法 $getAuthheader
+    const { proxy } = getCurrentInstance()
+    const headers = ref<string>(proxy.$getAuthheader)
+    // console.log(proxy.$getAuthheader)
     const formRef = ref()
     const currentName = ref('') //编辑物品传过来的物品名
     const currentIcon = ref('') //编辑物品传过来的物品图片
@@ -222,6 +239,7 @@ export default defineComponent({
       beforeUpload,
       fileList,
       currentIcon,
+      headers,
     }
   },
 })
