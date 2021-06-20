@@ -20,41 +20,41 @@
               <QqOutlined />
               <span>分类管理</span>
             </template>
-            <a-menu-item key="1">
+            <a-menu-item key="/categories/create">
               <router-link to="/categories/create">新建分类</router-link>
             </a-menu-item>
-            <a-menu-item key="2">
+            <a-menu-item key="/categories/list">
               <router-link to="/categories/list">分类列表</router-link>
             </a-menu-item>
           </a-menu-item-group>
           <a-menu-item-group key="g2" title="物品">
-            <a-menu-item key="3">
+            <a-menu-item key="/gameitems/create">
               <router-link to="/gameitems/create">新建物品</router-link>
             </a-menu-item>
-            <a-menu-item key="4">
+            <a-menu-item key="/gameitems/list">
               <router-link to="/gameitems/list">物品列表</router-link>
             </a-menu-item>
           </a-menu-item-group>
           <a-menu-item-group key="g3" title="英雄">
-            <a-menu-item key="5">
+            <a-menu-item key="/heroes/create">
               <router-link to="/heroes/create">新建英雄</router-link>
             </a-menu-item>
-            <a-menu-item key="6">
+            <a-menu-item key="/heroes/list">
               <router-link to="/heroes/list">英雄列表</router-link>
             </a-menu-item>
           </a-menu-item-group>
           <a-menu-item-group key="g4" title="文章">
-            <a-menu-item key="7">
+            <a-menu-item key="/articles/create">
               <router-link to="/articles/create">新建文章</router-link>
             </a-menu-item>
-            <a-menu-item key="8">
+            <a-menu-item key="/articles/list">
               <router-link to="/articles/list">文章列表</router-link>
             </a-menu-item>
             <a-menu-item-group key="g5" title="广告">
-              <a-menu-item key="9">
+              <a-menu-item key="/ads/create">
                 <router-link to="/ads/create">新建广告位</router-link>
               </a-menu-item>
-              <a-menu-item key="10">
+              <a-menu-item key="/ads/list">
                 <router-link to="/ads/list">广告位列表</router-link>
               </a-menu-item>
             </a-menu-item-group>
@@ -72,19 +72,11 @@
               <QqOutlined />
               <span>管理员</span>
             </template>
-            <a-menu-item key="11">
+            <a-menu-item key="/admin_users/create">
               <router-link to="/admin_users/create">新建管理员</router-link>
             </a-menu-item>
-            <a-menu-item key="12">
+            <a-menu-item key="/admin_users/list">
               <router-link to="/admin_users/list">管理员列表</router-link>
-            </a-menu-item>
-          </a-menu-item-group>
-          <a-menu-item-group key="g7" title="物品">
-            <a-menu-item key="13">
-              <router-link to="/gameitems/create">新建物品</router-link>
-            </a-menu-item>
-            <a-menu-item key="14">
-              <router-link to="/gameitems/list">物品列表</router-link>
             </a-menu-item>
           </a-menu-item-group>
         </a-sub-menu>
@@ -100,19 +92,11 @@
               <QqOutlined />
               <span>管理员</span>
             </template>
-            <a-menu-item key="15">
+            <a-menu-item key="/categories/create">
               <router-link to="/categories/create">新建管理员</router-link>
             </a-menu-item>
-            <a-menu-item key="16">
+            <a-menu-item key="/categories/list">
               <router-link to="/categories/list">管理员列表</router-link>
-            </a-menu-item>
-          </a-menu-item-group>
-          <a-menu-item-group key="g9" title="物品">
-            <a-menu-item key="17">
-              <router-link to="/gameitems/create">新建物品</router-link>
-            </a-menu-item>
-            <a-menu-item key="18">
-              <router-link to="/gameitems/list">物品列表</router-link>
             </a-menu-item>
           </a-menu-item-group>
         </a-sub-menu>
@@ -128,7 +112,7 @@
         <div
           :style="{ padding: '24px', background: '#fff', minHeight: '360px' }"
         >
-          <router-view></router-view>
+          <router-view :key="$route.path"></router-view>
         </div>
       </a-layout-content>
     </a-layout>
@@ -143,9 +127,7 @@ import {
   MailOutlined,
   QqOutlined,
 } from '@ant-design/icons-vue'
-import { defineComponent, ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-// import Login from "../login/Login.vue";
+import { defineComponent, ref, onMounted } from 'vue'
 
 export default defineComponent({
   name: 'home',
@@ -158,17 +140,11 @@ export default defineComponent({
     QqOutlined,
   },
   setup(props) {
-    // const router = useRouter();
-    // console.log(router);
-    // const path = ref(router.currentRoute.value.path);
-    // const pathName = computed(() => {
-    //   return path.value.slice(1).split("/");
-    // });
     const collapsed = ref<boolean>(false)
-    const selectedKeys = ref<string[]>(['1'])
+    const selectedKeys = ref<string[]>([])
 
     onMounted(() => {
-      selectedKeys.value = ['2']
+      selectedKeys.value = ['1']
     })
 
     const selectMenu = ({ item, key, selectedKeys }) => {
