@@ -7,10 +7,10 @@
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
   >
-    <a-form-item label="所属分类" name="articles">
+    <a-form-item label="所属分类" name="categories">
       <a-select
         mode="multiple"
-        v-model:value="formState.articles"
+        v-model:value="formState.categories"
         placeholder="请选择分类"
       >
         <a-select-option
@@ -21,8 +21,8 @@
         >
       </a-select>
     </a-form-item>
-    <a-form-item label="标题" name="name">
-      <a-input v-model:value="formState.name" placeholder="请输入文章名称" />
+    <a-form-item label="标题" name="title">
+      <a-input v-model:value="formState.title" placeholder="请输入文章名称" />
     </a-form-item>
     <a-form-item label="详情" name="body">
       <vue-editor
@@ -61,8 +61,8 @@ import {
 import { VueEditor } from 'vue3-editor'
 
 interface FormState {
-  name: string
-  articles: string[]
+  title: string
+  categories: string[]
   body: string
 }
 
@@ -80,12 +80,12 @@ export default defineComponent({
     const formRef = ref()
     const categories = ref<string[]>([])
     const formState: UnwrapRef<FormState> = reactive({
-      name: '',
-      articles: [],
+      title: '',
+      categories: [],
       body: '',
     })
     const rules = {
-      name: [
+      title: [
         {
           required: true,
           message: '请输入文章名称',
@@ -93,7 +93,7 @@ export default defineComponent({
         },
         // { min: 3, max: 5, message: "Length should be 3 to 5", trigger: "blur" },
       ],
-      articles: [
+      categories: [
         {
           required: true,
           message: '请选择文章分类',
@@ -119,16 +119,9 @@ export default defineComponent({
             // 发送添加文章的请求
             result = await reqAdd(modelUrl, toRaw(formState))
           }
-
-          // console.log(result);
-          // 根据后台返回的数据判断文章名称是否相同
-          if (result.status === 1) {
-            message.error(`${result.message}`)
-          } else {
-            // 跳转到文章列表页面
-            router.push('/articles/list')
-            message.success('保存成功')
-          }
+          // 跳转到文章列表页面
+          router.push('/articles/list')
+          message.success('保存成功')
         })
         .catch((error: ValidateErrorEntity<FormState>) => {
           console.log('error', error)
@@ -144,7 +137,7 @@ export default defineComponent({
       const result = (await reqGetDetail(modelUrl, { id })) as FormState
       // console.log(result)
       Object.assign(formState, result)
-      // formState.name = result.name
+      // formState.title = result.title
     }
 
     /** 获取所属分类列表*/

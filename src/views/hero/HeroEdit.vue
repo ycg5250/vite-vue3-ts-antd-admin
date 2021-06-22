@@ -381,7 +381,7 @@ export default defineComponent({
 
     /**获取英雄装备 */
     const getHeroItems = async () => {
-      const result = (await reqGetList('/gameitems')) as string[]
+      const result = (await reqGetList('/items')) as string[]
       heroItems.value = result
     }
 

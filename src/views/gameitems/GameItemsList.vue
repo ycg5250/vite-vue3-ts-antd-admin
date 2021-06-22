@@ -104,7 +104,7 @@ export default defineComponent({
 
     const goToEdit = (key: string) => {
       // console.log(111);
-      router.push(`/gameitems/edit/${key}`)
+      router.push(`/items/edit/${key}`)
     }
 
     return {

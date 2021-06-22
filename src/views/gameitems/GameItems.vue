@@ -157,7 +157,7 @@ export default defineComponent({
             message.error(`${result.message}`)
           } else {
             // 跳转到分类列表页面
-            router.push('/gameitems/list')
+            router.push('/items/list')
             message.success('保存成功')
           }
         })

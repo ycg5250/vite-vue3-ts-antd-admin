@@ -33,7 +33,7 @@ const routes = [
     ]
   },
   {
-    path: '/gameitems', component: Home, alias: '/gameitems', children: [
+    path: '/items', component: Home, alias: '/items', children: [
       { path: 'create', component: GameItems, alias: 'create' },
       { path: 'edit/:id', component: GameItems, alias: 'edit/:id', props: true },
       { path: 'list', component: GameItemsList, alias: 'list' },

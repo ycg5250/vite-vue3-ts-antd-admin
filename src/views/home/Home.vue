@@ -28,11 +28,11 @@
             </a-menu-item>
           </a-menu-item-group>
           <a-menu-item-group key="g2" title="物品">
-            <a-menu-item key="/gameitems/create">
-              <router-link to="/gameitems/create">新建物品</router-link>
+            <a-menu-item key="/items/create">
+              <router-link to="/items/create">新建物品</router-link>
             </a-menu-item>
-            <a-menu-item key="/gameitems/list">
-              <router-link to="/gameitems/list">物品列表</router-link>
+            <a-menu-item key="/items/list">
+              <router-link to="/items/list">物品列表</router-link>
             </a-menu-item>
           </a-menu-item-group>
           <a-menu-item-group key="g3" title="英雄">

@@ -4,7 +4,7 @@
     <template #operation="{ record }">
       <a-popconfirm
         v-if="dataSource.length"
-        :title="`确认删除 ${record.name} 吗`"
+        :title="`确认删除 ${record.title} 吗`"
         ok-text="确定"
         cancel-text="取消"
         @confirm="onDelete(record._id)"
@@ -25,7 +25,7 @@ import { message } from 'ant-design-vue'
 interface DataItem {
   key: string
   _id?: string
-  name: string
+  title: string
 }
 
 export default defineComponent({
@@ -46,8 +46,8 @@ export default defineComponent({
       },
       {
         title: '文章名称',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'title',
+        key: 'title',
       },
       {
         title: '操作',
