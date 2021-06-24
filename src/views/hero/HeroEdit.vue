@@ -130,18 +130,35 @@
             :rows="4"
           />
         </a-form-item>
-        <a-form-item label="图标" name="avatar">
+        <a-form-item label="头像" name="avatar">
           <a-upload
             v-model:avatar="formState.avatar"
             name="avatar"
+            :data="{ avatar: true }"
             list-type="picture-card"
-            class="avatar-uploader"
             :show-upload-list="false"
-            action="/admin/api/upload"
             :before-upload="beforeUpload"
-            @change="handleChange"
+            :customRequest="customRequest"
           >
             <img v-if="formState.avatar" :src="formState.avatar" alt="avatar" />
+            <div v-else>
+              <loading-outlined v-if="loading"></loading-outlined>
+              <plus-outlined v-else></plus-outlined>
+              <div class="ant-upload-text">Upload</div>
+            </div>
+          </a-upload>
+        </a-form-item>
+        <a-form-item label="背景图" name="banner">
+          <a-upload
+            v-model:banner="formState.banner"
+            name="avatar"
+            :data="{ banner: true }"
+            list-type="picture-card"
+            :show-upload-list="false"
+            :before-upload="beforeUpload"
+            :customRequest="customRequest"
+          >
+            <img v-if="formState.banner" :src="formState.banner" alt="banner" />
             <div v-else>
               <loading-outlined v-if="loading"></loading-outlined>
               <plus-outlined v-else></plus-outlined>
@@ -167,17 +184,13 @@
                 placeholder="请输入技能名称"
               ></a-input>
             </a-form-item>
-            <!-- :customRequest="customRequest" -->
-            <!-- list-type="picture-card" -->
             <a-form-item label="图标">
               <a-upload
                 v-model:avatar="item.icon"
                 name="avatar"
                 :data="{ index }"
                 list-type="picture-card"
-                class="avatar-uploader"
                 :show-upload-list="false"
-                action="/admin/api/upload"
                 :before-upload="beforeUpload"
                 :customRequest="customRequest"
               >
@@ -192,6 +205,14 @@
                   <div class="ant-upload-text">Upload</div>
                 </div>
               </a-upload>
+            </a-form-item>
+            <a-form-item label="冷却值">
+              <a-input v-model:value="item.delay" placeholder="请输入冷却值">
+              </a-input>
+            </a-form-item>
+            <a-form-item label="消耗">
+              <a-input v-model:value="item.cost" placeholder="请输入消耗">
+              </a-input>
             </a-form-item>
             <a-form-item label="描述">
               <a-textarea
@@ -210,6 +231,52 @@
                 ok-text="确定"
                 cancel-text="取消"
                 @confirm="delateSkill(index)"
+              >
+                <a-button style="margin-left: 5.5rem" type="danger"
+                  >删除</a-button
+                >
+              </a-popconfirm>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-tab-pane>
+      <a-tab-pane key="3" tab="最佳搭档">
+        <a-button type="primary" @click="formState.partners.push({})">
+          <template #icon><PlusOutlined /></template>添加英雄</a-button
+        >
+        <a-row type="flex">
+          <a-col
+            :span="10"
+            :offset="2"
+            v-for="(partner, index) of formState.partners"
+            :key="index"
+          >
+            <a-form-item label="英雄">
+              <a-select
+                placeholder="请选择英雄"
+                v-model:value="partner.hero"
+                show-search
+                :filter-option="filterOption"
+                style="width: 100%"
+              >
+                <a-select-option v-for="hero in heroList" :key="hero._id">
+                  {{ hero.name }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+            <a-form-item label="描述">
+              <a-textarea
+                v-model:value="partner.description"
+                placeholder="请输入英雄描述"
+                :rows="4"
+              />
+            </a-form-item>
+            <a-form-item>
+              <a-popconfirm
+                title="确认删除吗"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="delatePartner(index)"
               >
                 <a-button style="margin-left: 5.5rem" type="danger"
                   >删除</a-button
@@ -238,6 +305,7 @@ import {
   ref,
   toRaw,
   UnwrapRef,
+  computed,
 } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -252,6 +320,7 @@ import {
 interface FormState {
   name: string
   avatar: string | undefined
+  banner: string | undefined
   title: string
   categories: string[]
   scores: object
@@ -261,6 +330,7 @@ interface FormState {
   battleTips: string
   teamTips: string
   skills: any[]
+  partners: []
 }
 
 interface FileItem {
@@ -296,9 +366,11 @@ export default defineComponent({
     const activeKey = ref('1') //当前激活 tab 面板的 key
     const heroCategories = ref<string[]>([])
     const heroItems = ref<string[]>([])
+    const heroList = ref<string[]>([])
     const formState: UnwrapRef<FormState> = reactive({
       name: '',
       avatar: undefined,
+      banner: undefined,
       title: '',
       categories: [],
       scores: {},
@@ -308,6 +380,7 @@ export default defineComponent({
       battleTips: '',
       teamTips: '',
       skills: [],
+      partners: [],
     })
 
     // 上传图片相关参数
@@ -378,6 +451,12 @@ export default defineComponent({
       const result = (await reqGetList('/categories')) as string[]
       heroCategories.value = result
     }
+    /**获取英雄列表 */
+    const getHeroList = async () => {
+      const result = (await reqGetList('/heroes')) as string[]
+      heroList.value = result
+      // console.log(result)
+    }
 
     /**获取英雄装备 */
     const getHeroItems = async () => {
@@ -389,11 +468,21 @@ export default defineComponent({
     const delateSkill = (index: number) => {
       formState.skills.splice(index, 1)
     }
+    /**删除最佳搭档 */
+    const delatePartner = (index: number) => {
+      formState.partners.splice(index, 1)
+    }
+
+    const filterOption = (input: string, option: any) => {
+      // console.log(input, option)
+      return option.children[0].children.indexOf(input) >= 0
+    }
 
     onMounted(() => {
       activeKey.value = '1'
       getHeroCategories()
       getHeroItems()
+      getHeroList()
       if (route.params.id) {
         getHeroDetail(route.params.id.toString())
       }
@@ -421,16 +510,23 @@ export default defineComponent({
 
     /**自定义上传图片 */
     const customRequest = async (options: any) => {
-      // console.log('customRequest', options)
-      const { filename, file, action, data, onSuccess } = options
+      console.log('customRequest', options)
+      let { filename, file, action, data, onSuccess } = options
       // 定义上传的文件
+      action = '/admin/api/upload'
       const formData = new FormData()
       formData.append(filename, file)
       // 发送请求
       const result: any = await uploadImage(action, formData)
       // console.log(result)
       getBase64(file, (base64Url: string) => {
-        formState.skills[data.index].icon = base64Url
+        if (data.avatar) {
+          formState.avatar = base64Url
+        } else if (data.banner) {
+          formState.banner = base64Url
+        } else {
+          formState.skills[data.index].icon = base64Url
+        }
       })
       // 调用 onSuccess 不然会一直显示loadning
       onSuccess()
@@ -467,6 +563,9 @@ export default defineComponent({
       activeKey,
       customRequest,
       delateSkill,
+      heroList,
+      filterOption,
+      delatePartner,
     }
   },
 })
